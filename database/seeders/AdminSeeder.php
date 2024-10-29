@@ -31,7 +31,10 @@ class AdminSeeder extends Seeder
         } else {
             // If the user doesn't exist, create the user and assign the admin role
             $admin = User::create([
-                'name' => 'chibuike', // Update the name if necessary
+                
+                 'first_name' => 'chibuike',
+                'last_name' => 'innocent',
+                'phone' => '08088879523',
                 'email' => $adminEmail,
                 'password' => bcrypt('password'), // Set a secure password
             ]);
