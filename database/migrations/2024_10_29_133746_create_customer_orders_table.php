@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('supplier_orders', function (Blueprint $table) {
+        Schema::create('customer_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
-            $table->date('order_date');
-            $table->enum('status', ['pending', 'received', 'cancelled']);
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->dateTime('order_date');
+            $table->decimal('total_amount', 10, 2);
+            $table->enum('status', ['pending', 'shipped', 'delivered', 'cancelled']);
             $table->timestamps();
             $table->softDeletes();
         });
-
     }
 
     /**
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('supplier_orders');
+        Schema::dropIfExists('customer_orders');
     }
 };

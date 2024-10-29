@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('category_id')->constrained('product_categories');
             $table->foreignId('brand_id')->nullable()->constrained('brands');
+            $table->foreignId('colour_id')->constrained()->onDelete('cascade');
+            $table->foreignId('size_id')->constrained()->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
             $table->text('description');
             $table->decimal('price', 10, 2);
             $table->integer('stock_quantity');
