@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
             BrandsTableSeeder::class,
             ColoursTableSeeder::class,
             SizesTableSeeder::class,
+            SuppliersTableSeeder::class,
+            ProductsTableSeeder::class,
 
 
 
