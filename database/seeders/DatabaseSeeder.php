@@ -29,12 +29,16 @@ class DatabaseSeeder extends Seeder
             SizesTableSeeder::class,
             SuppliersTableSeeder::class,
             ProductsTableSeeder::class,
+            CustomerOrdersTableSeeder::class,
+            CustomerOrderLinesTableSeeder::class,
+            SupplierOrdersTableSeeder::class,
+            SupplierOrderLinesTableSeeder::class,
 
 
 
 
-            
-           
+
+
 
 
         ]);
