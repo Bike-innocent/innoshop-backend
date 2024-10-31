@@ -9,12 +9,15 @@ class CustomerOrder extends Model
 {
     use HasFactory;
 
-    public function user() {
-        return $this->belongsTo(User::class);
-    }
-    
-    public function orderLines() {
-        return $this->hasMany(CustomerOrderLine::class);
-    }
-    
+    public function customerOrderLines()
+{
+    return $this->hasMany(CustomerOrderLine::class);
+}
+
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+
 }

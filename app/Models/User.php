@@ -28,7 +28,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'email',
+        // 'email',
         'email_verified_at',
         'created_at',
         'updated_at',
@@ -53,15 +53,23 @@ class User extends Authenticatable
      */
 
 
-     public function addresses() {
-        return $this->hasMany(UserAddress::class);
-    }
-    
+   
+    public function addresses()
+{
+    return $this->hasManyThrough(Address::class, UserAddress::class, 'user_id', 'id', 'id', 'address_id');
+}
+
+public function userAddresses()
+{
+    return $this->hasMany(UserAddress::class);
+}
+
+
     public function orders() {
         return $this->hasMany(CustomerOrder::class);
     }
-    
- 
+
+
 
 
 }

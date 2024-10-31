@@ -11,8 +11,12 @@ class Address extends Model
 
     protected $guarded = [];
 
-    public function users() {
-        return $this->hasMany(UserAddress::class);
-    }
-    
+  
+
+    public function userAddresses()
+{
+    return $this->hasMany(UserAddress::class);
+}
+
+
 }
