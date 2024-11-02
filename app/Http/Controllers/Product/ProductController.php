@@ -19,24 +19,24 @@ class ProductController extends Controller
 
 
     public function index()
-{
-    $products = Product::with(['category', 'brand', 'colour', 'size', 'supplier', 'images', 'primaryImage'])
-        ->get()
-        ->map(function ($product) {
-            // Set the primary image URL
-            if ($product->primaryImage) {
-                $product->primaryImage->image_path = url('product-images/' . $product->primaryImage->image_path);
-            }
-            // Set URLs for all images
-            $product->images = $product->images->map(function ($image) {
-                $image->image_path = url('product-images/' . $image->image_path);
-                return $image;
+    {
+        $products = Product::with(['category', 'brand', 'colour', 'size', 'supplier', 'images', 'primaryImage'])
+            ->get()
+            ->map(function ($product) {
+                // Set the primary image URL
+                if ($product->primaryImage) {
+                    $product->primaryImage->image_path = url('product-images/' . $product->primaryImage->image_path);
+                }
+                // Set URLs for all images
+                $product->images = $product->images->map(function ($image) {
+                    $image->image_path = url('product-images/' . $image->image_path);
+                    return $image;
+                });
+                return $product;
             });
-            return $product;
-        });
 
-    return response()->json($products);
-}
+        return response()->json($products);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -49,10 +49,26 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($slug)
     {
-        //
+        $product = Product::where('slug', $slug)
+            ->with(['category', 'brand', 'colour', 'size', 'supplier', 'images'])
+            ->firstOrFail();
+
+        // Set the URL for the primary image
+        if ($product->primaryImage) {
+            $product->primaryImage->image_path = url('product-images/' . $product->primaryImage->image_path);
+        }
+
+        // Set the URLs for all additional images
+        $product->images = $product->images->map(function ($image) {
+            $image->image_path = url('product-images/' . $image->image_path);
+            return $image;
+        });
+
+        return response()->json($product);
     }
+
 
     /**
      * Update the specified resource in storage.

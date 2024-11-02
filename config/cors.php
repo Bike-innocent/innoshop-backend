@@ -3,7 +3,7 @@
 
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
-    'allowed_origins' => ['https://buike.com.ng','https://chibuikeinnocent.tech','http://localhost:5173'],
+    'allowed_origins' => ['http://innoshop.chibuikeinnocent.tech','http://www.innoshop.chibuikeinnocent.tech','https://innoshop.chibuikeinnocent.tech','https://www.innoshop.chibuikeinnocent.tech','http://localhost:5173'],
     'allowed_methods' => ['*'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
