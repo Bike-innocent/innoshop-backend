@@ -32,7 +32,9 @@ class DatabaseSeeder extends Seeder
             CustomerOrdersTableSeeder::class,
             CustomerOrderLinesTableSeeder::class,
             SupplierOrdersTableSeeder::class,
+            ProductImageSeeder::class,
             SupplierOrderLinesTableSeeder::class,
+            
 
 
 

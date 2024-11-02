@@ -11,10 +11,32 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index()
+    // {
+    //     return Product::with(['category', 'brand', 'colour', 'size', 'supplier'])->get();
+    // }
+
+
+
     public function index()
-    {
-        return Product::with(['category', 'brand', 'colour', 'size', 'supplier'])->get();
-    }
+{
+    $products = Product::with(['category', 'brand', 'colour', 'size', 'supplier', 'images', 'primaryImage'])
+        ->get()
+        ->map(function ($product) {
+            // Set the primary image URL
+            if ($product->primaryImage) {
+                $product->primaryImage->image_path = url('product-images/' . $product->primaryImage->image_path);
+            }
+            // Set URLs for all images
+            $product->images = $product->images->map(function ($image) {
+                $image->image_path = url('product-images/' . $image->image_path);
+                return $image;
+            });
+            return $product;
+        });
+
+    return response()->json($products);
+}
 
     /**
      * Store a newly created resource in storage.

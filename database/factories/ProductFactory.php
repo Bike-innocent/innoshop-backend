@@ -8,6 +8,7 @@ use App\Models\Brand;
 use App\Models\Colour;
 use App\Models\Size;
 use App\Models\Supplier;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
@@ -23,6 +24,7 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
+            'slug' => Str::random(10),
             'category_id' => ProductCategory::factory(),
             'brand_id' => Brand::factory(),
             'colour_id' => Colour::factory(),

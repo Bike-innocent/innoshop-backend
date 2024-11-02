@@ -28,3 +28,16 @@
 //     $table->string('country');
 //     $table->timestamps();
 // });
+
+
+
+
+
+
+// composer update --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-exif --with-all-dependencies
+
+
+
+// ssh-keygen -t rsa -b 4096 -C "onyemaobichibuikeinnocent.com@gmail.com"
+// cat ~/.ssh/id_rsa.pub
+// ssh -T git@github.com

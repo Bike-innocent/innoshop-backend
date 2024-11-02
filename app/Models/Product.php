@@ -4,10 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use HasFactory;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Automatically generate a unique slug when a product is created
+        static::creating(function ($product) {
+            $product->slug = self::generateUniqueSlug();
+        });
+    }
+
+    public static function generateUniqueSlug()
+    {
+        do {
+            $slug = Str::random(10);
+        } while (self::where('slug', $slug)->exists());
+
+        return $slug;
+    }
 
     public function category()
     {
@@ -34,5 +54,13 @@ class Product extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 
+    public function primaryImage()
+    {
+        return $this->hasOne(ProductImage::class)->where('is_primary', true);
+    }
 }
