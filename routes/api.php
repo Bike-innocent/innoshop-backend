@@ -9,6 +9,8 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 use App\Http\Controllers\Contact\ContactController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Product\ProductCategoryController;
+
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -60,3 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
+
+
+
+
+Route::apiResource('product-categories', ProductCategoryController::class);
