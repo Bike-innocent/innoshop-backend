@@ -12,6 +12,7 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\ProductCategoryController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\ColourController;
+use App\Http\Controllers\Product\SizeController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -81,3 +82,9 @@ Route::post('brands/{id}/restore', [BrandController::class, 'restore']);
 
 Route::apiResource('colours', ColourController::class);
 Route::post('colours/{id}/restore', [ColourController::class, 'restore']);
+
+
+
+
+Route::apiResource('sizes', SizeController::class);
+Route::post('sizes/{id}/restore', [SizeController::class, 'restore']);
