@@ -10,7 +10,8 @@ use App\Http\Controllers\Contact\ContactController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\ProductCategoryController;
-
+use App\Http\Controllers\Product\BrandController;
+use App\Http\Controllers\Product\ColourController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -67,3 +68,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::apiResource('product-categories', ProductCategoryController::class);
+
+
+// routes/api.php
+
+
+
+Route::apiResource('brands', BrandController::class);
+Route::post('brands/{id}/restore', [BrandController::class, 'restore']);
+
+
+
+Route::apiResource('colours', ColourController::class);
+Route::post('colours/{id}/restore', [ColourController::class, 'restore']);
