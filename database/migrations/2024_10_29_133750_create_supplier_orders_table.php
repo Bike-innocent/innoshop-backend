@@ -11,14 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Schema::create('supplier_orders', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+        //     $table->date('order_date');
+        //     $table->enum('status', ['pending', 'received', 'cancelled']);
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
         Schema::create('supplier_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+            // Updated to reference the `users` table
+            $table->foreignId('supplier_id')->constrained('users')->onDelete('cascade');
             $table->date('order_date');
             $table->enum('status', ['pending', 'received', 'cancelled']);
             $table->timestamps();
             $table->softDeletes();
         });
+        
     }
 
     /**

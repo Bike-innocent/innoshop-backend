@@ -1,4 +1,6 @@
 <?php
+
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -13,25 +15,32 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create permissions
-        Permission::create(['name' => 'view posts']);
-        Permission::create(['name' => 'create posts']);
-        Permission::create(['name' => 'edit posts']);
-        Permission::create(['name' => 'delete posts']);
         Permission::create(['name' => 'create roles']);
         Permission::create(['name' => 'assign role']);
         Permission::create(['name' => 'revoke role']);
 
-
-
+        // Additional supplier-related permissions
+        Permission::create(['name' => 'manage supplier orders']);
+        Permission::create(['name' => 'view supplier orders']);
+        Permission::create(['name' => 'create supplier products']);
+        Permission::create(['name' => 'update supplier products']);
+        Permission::create(['name' => 'delete supplier products']);
 
         // Create roles and assign created permissions
 
-        // Writer role
-        $role = Role::create(['name' => 'writer']);
-        $role->givePermissionTo(['create posts', 'edit posts', 'delete posts']);
+        // Supplier role
+        $supplierRole = Role::create(['name' => 'supplier']);
+        $supplierRole->givePermissionTo(['manage supplier orders', 'view supplier orders', 'create supplier products', 'update supplier products', 'delete supplier products']);
 
         // Admin role
-        $role = Role::create(['name' => 'admin']);
-        $role->givePermissionTo(Permission::all());
+        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo(Permission::all());
+
+        // Optional: Assign roles to users (uncomment if needed)
+        // \App\Models\User::find(1)->assignRole('admin'); // Assign Admin role to first user
+        // \App\Models\User::find(2)->assignRole('supplier'); // Assign Supplier role to second user
+
+        // Output a message for confirmation
+        $this->command->info('Roles and permissions seeded successfully.');
     }
 }

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\User;
+
 
 class Product extends Model
 {
@@ -49,10 +51,13 @@ class Product extends Model
         return $this->belongsTo(Size::class);
     }
 
-    public function supplier()
-    {
-        return $this->belongsTo(Supplier::class);
-    }
+   
+
+public function supplier()
+{
+    return $this->belongsTo(User::class, 'supplier_id');
+}
+
 
     public function images()
     {

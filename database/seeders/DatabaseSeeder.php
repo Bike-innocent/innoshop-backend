@@ -27,14 +27,15 @@ class DatabaseSeeder extends Seeder
             BrandsTableSeeder::class,
             ColoursTableSeeder::class,
             SizesTableSeeder::class,
-            SuppliersTableSeeder::class,
+          
+            SupplierSeeder::class,
             ProductsTableSeeder::class,
             CustomerOrdersTableSeeder::class,
             CustomerOrderLinesTableSeeder::class,
             SupplierOrdersTableSeeder::class,
             ProductImageSeeder::class,
             SupplierOrderLinesTableSeeder::class,
-            
+
 
 
 
