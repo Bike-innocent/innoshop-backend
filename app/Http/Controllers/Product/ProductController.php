@@ -95,6 +95,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductCategory;
 use App\Models\Brand;
 use App\Models\Colour;
@@ -139,25 +140,137 @@ class ProductController extends Controller
         ]);
     }
 
-    // Store a new product
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
+//     public function store(Request $request)
+// {
+//     // Validate the input
+//     $validated = $request->validate([
+//         'name' => 'required|string|max:255',
+//         'category_id' => 'required|exists:product_categories,id',
+//         'brand_id' => 'nullable|exists:brands,id',
+//         'colour_id' => 'required|exists:colours,id',
+//         'size_id' => 'required|exists:sizes,id',
+//         'supplier_id' => 'required|exists:users,id',
+//         'description' => 'required|string',
+//         'price' => 'required|numeric',
+//         'stock_quantity' => 'required|integer',
+//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
+//     ]);
 
-            'category_id' => 'required|exists:product_categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'colour_id' => 'required|exists:colours,id',
-            'size_id' => 'required|exists:sizes,id',
-            'supplier_id' => 'required|exists:users,id',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'stock_quantity' => 'required|integer',
-        ]);
+//     // Create the product
+//     $product = Product::create($validated);
 
-        $product = Product::create($validated);
-        return response()->json($product, 201);
+//     // Check if images are uploaded
+//     if ($request->hasFile('images')) {
+//         foreach ($request->file('images') as $key => $image) {
+//             // Store each image and save the path
+//             $path = $image->store('product-images', 'public');
+
+//             // Save the image details in the 'product_images' table
+//             $product->images()->create([
+//                 'image_path' => $path,
+//                 'is_primary' => $key === 0, // Set the first image as primary
+//             ]);
+//         }
+//     }
+
+//     return response()->json(['product' => $product, 'message' => 'Product created successfully'], 201);
+// }
+
+// public function store(Request $request)
+// {
+//     // Validate the input
+//     $validated = $request->validate([
+//         'name' => 'required|string|max:255',
+//         'category_id' => 'required|exists:product_categories,id',
+//         'brand_id' => 'nullable|exists:brands,id',
+//         'colour_id' => 'required|exists:colours,id',
+//         'size_id' => 'required|exists:sizes,id',
+//         'supplier_id' => 'required|exists:users,id',
+//         'description' => 'required|string',
+//         'price' => 'required|numeric',
+//         'stock_quantity' => 'required|integer',
+
+//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+//     ]);
+
+//     // Create the product
+//     $product = Product::create($validated);
+
+//     // Check if images are uploaded
+//     if ($request->hasFile('images')) {
+//         foreach ($request->file('images') as $key => $image) {
+//             // Store each image and save the path
+//             $path = $image->store('product-images', 'public');
+
+//             // Use the create method on the ProductImage model directly
+//             ProductImage::create([
+//                 'product_id' => $product->id,
+//                 'image_path' => $path,
+//                 'is_primary' => $key === 0, // Set the first image as primary
+//             ]);
+//         }
+//     }
+
+//     return response()->json([
+//         'product' => $product,
+//         'message' => 'Product created successfully'
+//     ], 201);
+// }
+
+
+
+
+
+public function store(Request $request)
+{
+    // Validate the input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'category_id' => 'required|exists:product_categories,id',
+        'brand_id' => 'nullable|exists:brands,id',
+        'colour_id' => 'required|exists:colours,id',
+        'size_id' => 'required|exists:sizes,id',
+        'supplier_id' => 'required|exists:users,id',
+        'description' => 'required|string',
+        'price' => 'required|numeric',
+        'stock_quantity' => 'required|integer',
+        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    // Remove 'images' from validated data since it doesn't belong in the products table
+    $productData = collect($validated)->except(['images'])->toArray();
+
+    // Create the product
+    $product = Product::create($productData);
+
+    // Check if images are uploaded
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $key => $image) {
+            // Generate a unique filename with timestamp and original extension
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+    
+            // Move the image to 'public/product-images' folder
+            $image->move(public_path('product-images'), $filename);
+    
+            // Save only the generated filename in the database
+            ProductImage::create([
+                'product_id' => $product->id,
+                'image_path' => $filename, // Store only the filename
+                'is_primary' => $key === 0, // Set the first image as primary
+            ]);
+        }
     }
+    
+
+
+    return response()->json([
+        'product' => $product,
+        'message' => 'Product created successfully'
+    ], 201);
+}
+
+
+
 
     // Show a single product
     public function show($slug)
@@ -185,7 +298,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-           
+
             'category_id' => 'required|exists:product_categories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'colour_id' => 'required|exists:colours,id',
