@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
+    protected $guarded = [];
 
     protected static function boot()
     {
@@ -51,7 +53,7 @@ class Product extends Model
         return $this->belongsTo(Size::class);
     }
 
-   
+
 
 public function supplier()
 {
