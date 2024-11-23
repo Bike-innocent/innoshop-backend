@@ -39,6 +39,56 @@ class ProductController extends Controller
 
 
 
+// public function store(Request $request)
+// {
+//     // Validate the input
+//     $validated = $request->validate([
+//         'name' => 'required|string|max:255',
+//         'category_id' => 'required|exists:product_categories,id',
+//         'brand_id' => 'nullable|exists:brands,id',
+//         'colour_id' => 'required|exists:colours,id',
+//         'size_id' => 'required|exists:sizes,id',
+//         'supplier_id' => 'required|exists:users,id',
+//         'description' => 'required|string',
+//         'price' => 'required|numeric',
+//         'stock_quantity' => 'required|integer',
+//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+//     ]);
+
+//     // Remove 'images' from validated data since it doesn't belong in the products table
+//     $productData = collect($validated)->except(['images'])->toArray();
+
+//     // Create the product
+//     $product = Product::create($productData);
+
+//     // Check if images are uploaded
+//     if ($request->hasFile('images')) {
+//         foreach ($request->file('images') as $key => $image) {
+//             // Generate a unique filename with timestamp and original extension
+//             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+//             // Move the image to 'public/product-images' folder
+//             $image->move(public_path('product-images'), $filename);
+
+//             // Save only the generated filename in the database
+//             ProductImage::create([
+//                 'product_id' => $product->id,
+//                 'image_path' => $filename, // Store only the filename
+//                 'is_primary' => $key === 0, // Set the first image as primary
+//             ]);
+//         }
+//     }
+
+
+
+//     return response()->json([
+//         'product' => $product,
+//         'message' => 'Product created successfully'
+//     ], 201);
+// }
+
+
+
 public function store(Request $request)
 {
     // Validate the input
@@ -53,10 +103,11 @@ public function store(Request $request)
         'price' => 'required|numeric',
         'stock_quantity' => 'required|integer',
         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        'primary_image_index' => 'required|integer|min:0',
     ]);
 
-    // Remove 'images' from validated data since it doesn't belong in the products table
-    $productData = collect($validated)->except(['images'])->toArray();
+    $productData = collect($validated)->except(['images', 'primary_image_index'])->toArray();
+    $primaryImageIndex = $validated['primary_image_index'];
 
     // Create the product
     $product = Product::create($productData);
@@ -64,28 +115,34 @@ public function store(Request $request)
     // Check if images are uploaded
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $key => $image) {
-            // Generate a unique filename with timestamp and original extension
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Move the image to 'public/product-images' folder
             $image->move(public_path('product-images'), $filename);
 
-            // Save only the generated filename in the database
             ProductImage::create([
                 'product_id' => $product->id,
-                'image_path' => $filename, // Store only the filename
-                'is_primary' => $key === 0, // Set the first image as primary
+                'image_path' => $filename,
+                'is_primary' => $key == $primaryImageIndex, // Use the provided primary image index
             ]);
         }
     }
 
-
-
     return response()->json([
         'product' => $product,
-        'message' => 'Product created successfully'
+        'message' => 'Product created successfully',
     ], 201);
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -131,14 +188,12 @@ public function store(Request $request)
 
 
 
-//     // Update a product
+
 
 // public function update(Request $request, $slug)
 // {
-//     // Fetch the product by slug
 //     $product = Product::where('slug', $slug)->firstOrFail();
 
-//     // Validate the input
 //     $validated = $request->validate([
 //         'name' => 'required|string|max:255',
 //         'category_id' => 'required|exists:product_categories,id',
@@ -153,48 +208,45 @@ public function store(Request $request)
 //         'deleted_images' => 'array', // Array of image IDs to be deleted
 //     ]);
 
-//     // Update the product details
-//     $product->update($validated);
+//     // Update product fields except 'images'
+//     $productData = collect($validated)->except(['images', 'deleted_images'])->toArray();
+//     $product->update($productData);
 
-//     // Handle the deletion of existing images
+//     // Handle deleted images
 //     if ($request->has('deleted_images')) {
-//         foreach ($request->deleted_images as $imageId) {
-//             $image = ProductImage::find($imageId);
-//             if ($image) {
-//                 // Delete the image file from storage
-//                 $imagePath = public_path('product-images/' . $image->image_path);
-//                 if (file_exists($imagePath)) {
-//                     unlink($imagePath);
-//                 }
-//                 // Delete the record from the database
-//                 $image->delete();
-//             }
-//         }
+//         $deletedImageIds = $request->input('deleted_images');
+//         $product->images()->whereIn('id', $deletedImageIds)->delete();
 //     }
 
-//     // Check if new images are uploaded
-//     if ($request->hasFile('images')) {
-//         foreach ($request->file('images') as $key => $image) {
+//     // Handle new images
+//     if ($request->hasFile('new_images')) {
+//         foreach ($request->file('new_images') as $key => $image) {
 //             // Generate a unique filename with timestamp and original extension
 //             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
 //             // Move the image to 'public/product-images' folder
 //             $image->move(public_path('product-images'), $filename);
 
-//             // Save the image in the database
-//             ProductImage::create([
-//                 'product_id' => $product->id,
-//                 'image_path' => $filename,
-//                 'is_primary' => $key === 0, // Set the first image as primary if no primary image exists
+//             // Save only the generated filename in the database
+//             $product->images()->create([
+//                 'image_path' => $filename, // Store only the filename
+//                 'is_primary' => $key === 0, // Optionally set the first image as primary
 //             ]);
 //         }
 //     }
 
-//     return response()->json([
-//         'product' => $product,
-//         'message' => 'Product updated successfully'
-//     ], 200);
+//     return response()->json(['message' => 'Product updated successfully.']);
 // }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -203,6 +255,7 @@ public function update(Request $request, $slug)
 {
     $product = Product::where('slug', $slug)->firstOrFail();
 
+    // Validate the incoming request data
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'category_id' => 'required|exists:product_categories,id',
@@ -215,10 +268,11 @@ public function update(Request $request, $slug)
         'stock_quantity' => 'required|integer',
         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         'deleted_images' => 'array', // Array of image IDs to be deleted
+        'primary_image_index' => 'required|integer|min:0', // Ensure primary image index is provided
     ]);
 
     // Update product fields except 'images'
-    $productData = collect($validated)->except(['images', 'deleted_images'])->toArray();
+    $productData = collect($validated)->except(['images', 'deleted_images', 'primary_image_index'])->toArray();
     $product->update($productData);
 
     // Handle deleted images
@@ -236,18 +290,35 @@ public function update(Request $request, $slug)
             // Move the image to 'public/product-images' folder
             $image->move(public_path('product-images'), $filename);
 
-            // Save only the generated filename in the database
-            $product->images()->create([
+            // Save the new image in the database
+            $newImage = $product->images()->create([
                 'image_path' => $filename, // Store only the filename
-                'is_primary' => $key === 0, // Optionally set the first image as primary
+                'is_primary' => false, // Initially set it as non-primary
             ]);
+        }
+    }
+
+    // Assign primary image based on selected image index (existing or new)
+    if ($request->has('primary_image_index')) {
+        // Reset the current primary image to non-primary
+        $product->images()->update(['is_primary' => false]);
+
+        // Check if primary image is a new image or existing one
+        $primaryImageIndex = $request->input('primary_image_index');
+
+        // If the selected index corresponds to an existing image
+        $existingImage = $product->images()->skip($primaryImageIndex)->first();
+        if ($existingImage) {
+            $existingImage->update(['is_primary' => true]);
+        } else {
+            // If it's a new image, set the primary image based on index
+            $newImage = $product->images()->orderBy('created_at', 'desc')->first(); // Get the most recently uploaded image
+            $newImage->update(['is_primary' => true]);
         }
     }
 
     return response()->json(['message' => 'Product updated successfully.']);
 }
-
-
 
 
 
