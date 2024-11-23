@@ -111,14 +111,98 @@ public function store(Request $request)
         return response()->json($product);
     }
 
-    // Update a product
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     // Update a product
+
+// public function update(Request $request, $slug)
+// {
+//     // Fetch the product by slug
+//     $product = Product::where('slug', $slug)->firstOrFail();
+
+//     // Validate the input
+//     $validated = $request->validate([
+//         'name' => 'required|string|max:255',
+//         'category_id' => 'required|exists:product_categories,id',
+//         'brand_id' => 'nullable|exists:brands,id',
+//         'colour_id' => 'required|exists:colours,id',
+//         'size_id' => 'required|exists:sizes,id',
+//         'supplier_id' => 'required|exists:users,id',
+//         'description' => 'required|string',
+//         'price' => 'required|numeric',
+//         'stock_quantity' => 'required|integer',
+//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+//         'deleted_images' => 'array', // Array of image IDs to be deleted
+//     ]);
+
+//     // Update the product details
+//     $product->update($validated);
+
+//     // Handle the deletion of existing images
+//     if ($request->has('deleted_images')) {
+//         foreach ($request->deleted_images as $imageId) {
+//             $image = ProductImage::find($imageId);
+//             if ($image) {
+//                 // Delete the image file from storage
+//                 $imagePath = public_path('product-images/' . $image->image_path);
+//                 if (file_exists($imagePath)) {
+//                     unlink($imagePath);
+//                 }
+//                 // Delete the record from the database
+//                 $image->delete();
+//             }
+//         }
+//     }
+
+//     // Check if new images are uploaded
+//     if ($request->hasFile('images')) {
+//         foreach ($request->file('images') as $key => $image) {
+//             // Generate a unique filename with timestamp and original extension
+//             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+//             // Move the image to 'public/product-images' folder
+//             $image->move(public_path('product-images'), $filename);
+
+//             // Save the image in the database
+//             ProductImage::create([
+//                 'product_id' => $product->id,
+//                 'image_path' => $filename,
+//                 'is_primary' => $key === 0, // Set the first image as primary if no primary image exists
+//             ]);
+//         }
+//     }
+
+//     return response()->json([
+//         'product' => $product,
+//         'message' => 'Product updated successfully'
+//     ], 200);
+// }
+
+
+
 
 public function update(Request $request, $slug)
 {
-    // Fetch the product by slug
     $product = Product::where('slug', $slug)->firstOrFail();
 
-    // Validate the input
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'category_id' => 'required|exists:product_categories,id',
@@ -133,48 +217,38 @@ public function update(Request $request, $slug)
         'deleted_images' => 'array', // Array of image IDs to be deleted
     ]);
 
-    // Update the product details
-    $product->update($validated);
+    // Update product fields except 'images'
+    $productData = collect($validated)->except(['images', 'deleted_images'])->toArray();
+    $product->update($productData);
 
-    // Handle the deletion of existing images
+    // Handle deleted images
     if ($request->has('deleted_images')) {
-        foreach ($request->deleted_images as $imageId) {
-            $image = ProductImage::find($imageId);
-            if ($image) {
-                // Delete the image file from storage
-                $imagePath = public_path('product-images/' . $image->image_path);
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-                // Delete the record from the database
-                $image->delete();
-            }
-        }
+        $deletedImageIds = $request->input('deleted_images');
+        $product->images()->whereIn('id', $deletedImageIds)->delete();
     }
 
-    // Check if new images are uploaded
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $key => $image) {
+    // Handle new images
+    if ($request->hasFile('new_images')) {
+        foreach ($request->file('new_images') as $key => $image) {
             // Generate a unique filename with timestamp and original extension
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
             // Move the image to 'public/product-images' folder
             $image->move(public_path('product-images'), $filename);
 
-            // Save the image in the database
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image_path' => $filename,
-                'is_primary' => $key === 0, // Set the first image as primary if no primary image exists
+            // Save only the generated filename in the database
+            $product->images()->create([
+                'image_path' => $filename, // Store only the filename
+                'is_primary' => $key === 0, // Optionally set the first image as primary
             ]);
         }
     }
 
-    return response()->json([
-        'product' => $product,
-        'message' => 'Product updated successfully'
-    ], 200);
+    return response()->json(['message' => 'Product updated successfully.']);
 }
+
+
+
 
 
     // Delete a product
