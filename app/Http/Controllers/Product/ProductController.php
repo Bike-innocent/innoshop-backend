@@ -38,57 +38,6 @@ class ProductController extends Controller
 
 
 
-
-// public function store(Request $request)
-// {
-//     // Validate the input
-//     $validated = $request->validate([
-//         'name' => 'required|string|max:255',
-//         'category_id' => 'required|exists:product_categories,id',
-//         'brand_id' => 'nullable|exists:brands,id',
-//         'colour_id' => 'required|exists:colours,id',
-//         'size_id' => 'required|exists:sizes,id',
-//         'supplier_id' => 'required|exists:users,id',
-//         'description' => 'required|string',
-//         'price' => 'required|numeric',
-//         'stock_quantity' => 'required|integer',
-//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-//     ]);
-
-//     // Remove 'images' from validated data since it doesn't belong in the products table
-//     $productData = collect($validated)->except(['images'])->toArray();
-
-//     // Create the product
-//     $product = Product::create($productData);
-
-//     // Check if images are uploaded
-//     if ($request->hasFile('images')) {
-//         foreach ($request->file('images') as $key => $image) {
-//             // Generate a unique filename with timestamp and original extension
-//             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-//             // Move the image to 'public/product-images' folder
-//             $image->move(public_path('product-images'), $filename);
-
-//             // Save only the generated filename in the database
-//             ProductImage::create([
-//                 'product_id' => $product->id,
-//                 'image_path' => $filename, // Store only the filename
-//                 'is_primary' => $key === 0, // Set the first image as primary
-//             ]);
-//         }
-//     }
-
-
-
-//     return response()->json([
-//         'product' => $product,
-//         'message' => 'Product created successfully'
-//     ], 201);
-// }
-
-
-
 public function store(Request $request)
 {
     // Validate the input
@@ -168,75 +117,6 @@ public function store(Request $request)
         return response()->json($product);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// public function update(Request $request, $slug)
-// {
-//     $product = Product::where('slug', $slug)->firstOrFail();
-
-//     $validated = $request->validate([
-//         'name' => 'required|string|max:255',
-//         'category_id' => 'required|exists:product_categories,id',
-//         'brand_id' => 'nullable|exists:brands,id',
-//         'colour_id' => 'required|exists:colours,id',
-//         'size_id' => 'required|exists:sizes,id',
-//         'supplier_id' => 'required|exists:users,id',
-//         'description' => 'required|string',
-//         'price' => 'required|numeric',
-//         'stock_quantity' => 'required|integer',
-//         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-//         'deleted_images' => 'array', // Array of image IDs to be deleted
-//     ]);
-
-//     // Update product fields except 'images'
-//     $productData = collect($validated)->except(['images', 'deleted_images'])->toArray();
-//     $product->update($productData);
-
-//     // Handle deleted images
-//     if ($request->has('deleted_images')) {
-//         $deletedImageIds = $request->input('deleted_images');
-//         $product->images()->whereIn('id', $deletedImageIds)->delete();
-//     }
-
-//     // Handle new images
-//     if ($request->hasFile('new_images')) {
-//         foreach ($request->file('new_images') as $key => $image) {
-//             // Generate a unique filename with timestamp and original extension
-//             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-//             // Move the image to 'public/product-images' folder
-//             $image->move(public_path('product-images'), $filename);
-
-//             // Save only the generated filename in the database
-//             $product->images()->create([
-//                 'image_path' => $filename, // Store only the filename
-//                 'is_primary' => $key === 0, // Optionally set the first image as primary
-//             ]);
-//         }
-//     }
-
-//     return response()->json(['message' => 'Product updated successfully.']);
-// }
 
 
 
