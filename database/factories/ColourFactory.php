@@ -18,7 +18,7 @@ class ColourFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->colorName(),
-            'hex_code' => $this->faker->optional()->hexColor(),
+            'hex_code' => $this->faker->hexColor(),
         ];
     }
 }
