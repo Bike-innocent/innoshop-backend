@@ -9,15 +9,16 @@ class CustomerOrder extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function customerOrderLines()
-{
-    return $this->hasMany(CustomerOrderLine::class);
+    {
+        return $this->hasMany(CustomerOrderLine::class, 'order_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
 
-public function user()
-{
-    return $this->belongsTo(User::class);
-}
-
-
-}

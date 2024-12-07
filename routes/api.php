@@ -14,6 +14,7 @@ use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\ColourController;
 use App\Http\Controllers\Product\SizeController;
 use App\Http\Controllers\Product\SupplierController;
+use App\Http\Controllers\Order\CustomerOrderController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -94,3 +95,13 @@ Route::post('sizes/{id}/restore', [SizeController::class, 'restore']);
 
 Route::apiResource('suppliers', SupplierController::class);
 Route::post('suppliers/restore/{id}', [SupplierController::class, 'restore']);
+
+
+Route::prefix('orders')->group(function () {
+    Route::get('/', [CustomerOrderController::class, 'index']);
+    Route::post('/', [CustomerOrderController::class, 'store']);
+    Route::get('{id}', [CustomerOrderController::class, 'show']);
+    Route::put('{id}', [CustomerOrderController::class, 'update']);
+    Route::delete('{id}', [CustomerOrderController::class, 'destroy']);
+    Route::patch('{id}/restore', [CustomerOrderController::class, 'restore']);
+});
