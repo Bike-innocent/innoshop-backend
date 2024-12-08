@@ -15,6 +15,8 @@ use App\Http\Controllers\Product\ColourController;
 use App\Http\Controllers\Product\SizeController;
 use App\Http\Controllers\Product\SupplierController;
 use App\Http\Controllers\Order\CustomerOrderController;
+use App\Http\Controllers\Order\CartController;
+
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -105,3 +107,9 @@ Route::prefix('orders')->group(function () {
     Route::delete('{id}', [CustomerOrderController::class, 'destroy']);
     Route::patch('{id}/restore', [CustomerOrderController::class, 'restore']);
 });
+
+
+
+
+Route::post('/cart/sync', [CartController::class, 'sync']);
+Route::get('/cart', [CartController::class, 'index']);
