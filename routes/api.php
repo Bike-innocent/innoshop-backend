@@ -111,5 +111,9 @@ Route::prefix('orders')->group(function () {
 
 
 
-Route::post('/cart/sync', [CartController::class, 'sync']);
-Route::get('/cart', [CartController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::put('/cart/{id}', [CartController::class, 'update']);
+    Route::delete('/cart/{id}', [CartController::class, 'destroy']);
+});
