@@ -31,15 +31,17 @@ class CartController extends Controller
                 'quantity' => $item->quantity,
                 'price' => $item->product->price ?? 0,
                 'name' => $item->product->name ?? 'Unknown Product',
+                'slug' => $item->product->slug ?? null, // Ensure slug is included
                 'image' => $imageUrl, // Full URL for the image
                 'color' => $item->product->colour->name ?? null,
                 'size' => $item->product->size->name ?? null,
             ];
+
         });
 
         return response()->json($cartItems);
     }
-    
+
 
     // Add to Cart
     public function store(Request $request)
