@@ -17,6 +17,22 @@ class UserController extends Controller
     return response()->json($users);
     }
 
+
+    // public function userAddresses()
+    // {
+    //     $usersWithAddresses = User::with('userAddresses.address')->get();
+
+    //     return response()->json($usersWithAddresses);
+    // }
+
+
+    public function userAddresses()
+    {
+        // Fetch users with their addresses
+        $usersWithAddresses = User::with('addresses')->get();
+
+        return response()->json($usersWithAddresses);
+    }
     /**
      * Store a newly created resource in storage.
      */

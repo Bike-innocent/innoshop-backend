@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             AddressesTableSeeder::class,
             UserAccountsTableSeeder::class,
-            UserAddressesTableSeeder::class,
+            
             ProductCategoriesTableSeeder::class,
             BrandsTableSeeder::class,
             ColoursTableSeeder::class,
             SizesTableSeeder::class,
-          
+
             SupplierSeeder::class,
             ProductsTableSeeder::class,
             CustomerOrdersTableSeeder::class,

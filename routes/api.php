@@ -42,6 +42,10 @@ Route::post('/contact', [ContactController::class, 'sendContactMessage']);
 
 
 Route::get('/users', [UserController::class, 'index']);
+
+Route::get('/user-addresses', [UserController::class, 'userAddresses']);
+
+
 Route::get('/products', [ProductController::class, 'index']);
 
 Route::get('/products/{slug}', [ProductController::class, 'show']);
@@ -117,3 +121,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/{id}', [CartController::class, 'update']);
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
 });
+
+
+

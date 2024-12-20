@@ -11,12 +11,12 @@ class Address extends Model
 
     protected $guarded = [];
 
-  
 
-    public function userAddresses()
-{
-    return $this->hasMany(UserAddress::class);
-}
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
 
 }

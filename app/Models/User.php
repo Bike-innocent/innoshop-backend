@@ -53,21 +53,19 @@ class User extends Authenticatable
      */
 
 
-   
-    public function addresses()
-{
-    return $this->hasManyThrough(Address::class, UserAddress::class, 'user_id', 'id', 'id', 'address_id');
-}
 
-public function userAddresses()
-{
-    return $this->hasMany(UserAddress::class);
-}
 
 
     public function orders() {
         return $this->hasMany(CustomerOrder::class);
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'user_id');
+    }
+
+
 
 
 
